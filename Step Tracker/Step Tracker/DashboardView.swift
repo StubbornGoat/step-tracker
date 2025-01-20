@@ -84,9 +84,8 @@ struct DashboardView: View {
                 }
             }
             .padding()
-            .onAppear {
+            .task {
                 //clean this up
-                Task {
                     do {
                         if try await hkManager.store.statusForAuthorizationRequest(toShare: hkManager.types, read: hkManager.types) != .unnecessary {
                             showPermissionAlert = true
@@ -94,7 +93,7 @@ struct DashboardView: View {
                     } catch {
                         print("There was a problem checking authorization status: \(error.localizedDescription)")
                     }
-                }
+//                await hkManager.addSimulatorData()
             }
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
