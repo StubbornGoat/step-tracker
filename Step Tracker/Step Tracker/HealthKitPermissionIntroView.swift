@@ -40,6 +40,8 @@ You can also add new step or weight data to Apple Health from this app. Your dat
             .tint(.pink)
         }
         .padding(30)
+        //implement way to more gracefully leave the app or allow some functionality without authorization
+        .interactiveDismissDisabled()
         .healthDataAccessRequest(
             store: hkManager.store,
             shareTypes: hkManager.types,
