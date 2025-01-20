@@ -86,14 +86,13 @@ struct DashboardView: View {
             .padding()
             .task {
                 //clean this up
-                    do {
-                        if try await hkManager.store.statusForAuthorizationRequest(toShare: hkManager.types, read: hkManager.types) != .unnecessary {
-                            showPermissionAlert = true
-                        }
-                    } catch {
-                        print("There was a problem checking authorization status: \(error.localizedDescription)")
+                do {
+                    if try await hkManager.store.statusForAuthorizationRequest(toShare: hkManager.types, read: hkManager.types) != .unnecessary {
+                        showPermissionAlert = true
                     }
-//                await hkManager.addSimulatorData()
+                } catch {
+                    print("There was a problem checking authorization status: \(error.localizedDescription)")
+                }
             }
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
