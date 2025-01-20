@@ -24,7 +24,9 @@ enum HealthMetricContext: CaseIterable, Identifiable{
 }
 
 struct DashboardView: View {
+    @Environment(HealthKitManager.self) private var hkManager
     @State private var selectedStat: HealthMetricContext = .steps
+    @State var showPermissionAlert: Bool = false
     var isSteps: Bool { selectedStat == .steps}
     var body: some View {
         NavigationStack {
@@ -82,10 +84,26 @@ struct DashboardView: View {
                 }
             }
             .padding()
+            .task {
+                //clean this up
+                do {
+                    if try await hkManager.store.statusForAuthorizationRequest(toShare: hkManager.types, read: hkManager.types) != .unnecessary {
+                        showPermissionAlert = true
+                    }
+                } catch {
+                    print("There was a problem checking authorization status: \(error.localizedDescription)")
+                }
+            }
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(metric: metric)
             }
+            .sheet(
+                isPresented: $showPermissionAlert,
+                onDismiss: { // fetch health data
+                },
+                content: {HealthKitPermissionIntroView()}
+            )
         }
         .tint(isSteps ? .pink : .indigo)
     }
@@ -93,4 +111,5 @@ struct DashboardView: View {
 
 #Preview {
     DashboardView()
+        .environment(HealthKitManager())
 }
